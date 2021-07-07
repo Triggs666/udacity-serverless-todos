@@ -37,4 +37,19 @@ export class TodosDBAccess{
     
     }
 
+    async createTodosbyUserId(userId: string, newItem: TodoItem):Promise<TodoItem> {
+
+      this.logger.info('createTodosbyUserId', {userId, newTodo: newItem})
+  
+      const result = await this.docClient.put({
+          TableName: this.todosTable,
+          Item: newItem
+        }).promise()
+  
+      this.logger.info('getTodosbyUserId', {return:result})
+  
+      return newItem as TodoItem;
+  
+  }
+
 }
