@@ -4,6 +4,8 @@ import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } f
 
 import { UpdateTodoRequest } from '../../requests/UpdateTodoRequest'
 import { createLogger } from '../../utils/logger'
+import { Todos } from '../../businessLayer/todos'
+import { getUserId } from '../utils'
 
 const logger = createLogger('auth')
 
@@ -11,7 +13,18 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   const todoId = event.pathParameters.todoId
   const updatedTodo: UpdateTodoRequest = JSON.parse(event.body)
   logger.info('Updating a TODO', {todoId, updatedTodo})
+  
+  const todos = new Todos();
+  const item = await todos.updateTodobyUserTodoId(getUserId(event), todoId, updatedTodo)
 
-  // TODO: Update a TODO item with the provided id using values in the "updatedTodo" object
-  return undefined
+  return {
+    statusCode: 201,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': true
+    },
+    body: JSON.stringify({
+      item
+    })
+  }
 }

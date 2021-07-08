@@ -5,7 +5,6 @@ import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
 import { createLogger } from '../../utils/logger'
 import { Todos } from '../../businessLayer/todos'
 import { getUserId } from '../utils'
-import { TodoItem } from '../../models/TodoItem'
 
 const logger = createLogger('auth')
 
@@ -15,15 +14,16 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   logger.info('Creating a TODO', newTodo)
   
   const todos = new Todos();
-  const items = await todos.createTodobyUserId(getUserId(event), newTodo)
+  const item = await todos.createTodobyUserId(getUserId(event), newTodo)
 
   return {
-    statusCode: 200,
+    statusCode: 201,
     headers: {
-      'Access-Control-Allow-Origin': '*'
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': true
     },
     body: JSON.stringify({
-      items
+      item
     })
   }
 }

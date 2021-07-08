@@ -4,6 +4,7 @@ import { Logger } from 'winston';
 import { TodosDBAccess } from '../dataLayer/todosAccess';
 import { CreateTodoRequest } from '../requests/CreateTodoRequest';
 import * as uuid from 'uuid'
+import { UpdateTodoRequest } from '../requests/UpdateTodoRequest';
 
 export class Todos{
     private readonly logger:Logger;
@@ -40,23 +41,37 @@ export class Todos{
     
     }
 
-    async updateTodobyUserId(userId: string, newItem:CreateTodoRequest):Promise<TodoItem> {
-
-        const todoId = uuid.v4();
-        const createdAt = new Date().toISOString();
+    async updateTodobyUserTodoId(userId: string, todoId:string, newItem:UpdateTodoRequest):Promise<TodoItem> {
 
         const newTodo:TodoItem = {
             userId,
             todoId,
-            createdAt,
+            createdAt:'',
             name: newItem.name,
             dueDate: newItem.dueDate,
+            done: newItem.done
+        }
+
+        this.logger.info('updateTodobyUserId', {userId, newTodo});
+        return this.dbAccess.updateTodo(newTodo);
+    
+    }
+
+    async deleteTodobyUserId(userId: string, todoId: string) {
+
+        const deleteTodo:TodoItem = {
+            userId,
+            todoId,
+            createdAt:'',
+            name: '',
+            dueDate: '',
             done: false
         }
 
-        this.logger.info('createTodobyUserId', {userId, newTodo});
-        return this.dbAccess.createTodo(newTodo);
+        this.logger.info('deleteTodobyUserId', {deleteTodo});
+        this.dbAccess.deleteTodo(deleteTodo);
     
     }
+
 
 }
