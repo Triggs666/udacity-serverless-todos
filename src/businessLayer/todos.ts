@@ -36,7 +36,26 @@ export class Todos{
         }
 
         this.logger.info('createTodobyUserId', {userId, newTodo});
-        return this.dbAccess.createTodosbyUserId(userId, newTodo);
+        return this.dbAccess.createTodo(newTodo);
+    
+    }
+
+    async updateTodobyUserId(userId: string, newItem:CreateTodoRequest):Promise<TodoItem> {
+
+        const todoId = uuid.v4();
+        const createdAt = new Date().toISOString();
+
+        const newTodo:TodoItem = {
+            userId,
+            todoId,
+            createdAt,
+            name: newItem.name,
+            dueDate: newItem.dueDate,
+            done: false
+        }
+
+        this.logger.info('createTodobyUserId', {userId, newTodo});
+        return this.dbAccess.createTodo(newTodo);
     
     }
 

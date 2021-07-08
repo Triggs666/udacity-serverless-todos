@@ -37,18 +37,29 @@ export class TodosDBAccess{
     
     }
 
-    async createTodosbyUserId(userId: string, newItem: TodoItem):Promise<TodoItem> {
+    async createTodo(newItem: TodoItem):Promise<TodoItem> {
 
-      this.logger.info('createTodosbyUserId', {userId, newTodo: newItem})
+      this.logger.info('createTodo', {newTodo: newItem})
   
-      const result = await this.docClient.put({
+      /*const result = await this.docClient.put({
           TableName: this.todosTable,
           Item: newItem
-        }).promise()
+        },).promise()*/
+      const params = {
+        TableName: this.todosTable,
+        Item: newItem
+      }
+      const result = await this.  docClient.put(params, function(err, data) {
+          if (err) {
+            this.logger.info('ERROR', JSON.stringify(err, null, 2));
+          } else {
+            this.logger.info('createTodo', JSON.stringify(data, null, 2));
+          }
+      }).promise();
   
-      this.logger.info('getTodosbyUserId', {return:result})
+      this.logger.info('createTodo', {return:result})
   
-      return newItem as TodoItem;
+      return newItem;
   
   }
 
