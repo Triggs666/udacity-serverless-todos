@@ -63,27 +63,29 @@ export class TodosDBAccess{
     return newItem;
   }
 
-  async deleteTodo(item: TodoItem) {
-
-    this.logger.info('deleteTodo', {deleteTodo: item})
+  async deleteTodo(item: TodoItem) : Promise<boolean>{
 
     var params = {
       TableName:this.todosTable,
       Key:{
         userId: item.userId,
         todoId: item.todoId
-      }
+      },
+      ReturnValues:"ALL_OLD"
     }
+    this.logger.info('deleteTodo', {params});
 
-    this.docClient.delete(params,function(err, data) {
-      console.log('CHECKING DELETING');
-      if (err) {
-        this.logger.info("Unable to delete item. Error JSON:", JSON.stringify(err, null, 2));
-      } else {
-        this.logger.info("DeleteItem succeeded:", JSON.stringify(data, null, 2));
-      }
-    }).promise();
+    var deleteOK : boolean = false;
+    await this.docClient.delete(params).promise()
+    .then((data) => {
+      this.logger.info("Deleting process finished OK", {data})
+      deleteOK=true;
+    })
+    .catch((err) => {
+      this.logger.error("Deleting process ERROR",err)
+    });
 
+    return deleteOK;
   }
 
   async updateTodo(newItem: TodoItem):Promise<TodoItem> {

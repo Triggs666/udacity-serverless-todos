@@ -69,8 +69,8 @@ export class Todos{
         }
 
         this.logger.info('deleteTodobyUserId', {deleteTodo});
-        this.dbAccess.deleteTodo(deleteTodo);
-    
+        await this.dbAccess.deleteTodo(deleteTodo);
+        this.logger.info('deleteTodobyUserId END');
     }
 
 
