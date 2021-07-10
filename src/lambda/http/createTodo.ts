@@ -16,6 +16,17 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   const todos = new Todos();
   const item = await todos.createTodobyUserId(getUserId(event), newTodo)
 
+  if (item == undefined){
+    return {
+      statusCode: 500,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true
+      },
+      body: 'Server error creating item'
+    }
+  }
+
   return {
     statusCode: 201,
     headers: {

@@ -5,6 +5,7 @@ import { TodoItem } from '../models/TodoItem';
 import { createLogger } from '../utils/logger'
 
 import { Logger } from 'winston';
+import { AWSError } from 'aws-sdk';
 
 export class TodosDBAccess{
     
@@ -47,20 +48,17 @@ export class TodosDBAccess{
       Item: newItem
     }
 
-    const result = await this.docClient.put(params).promise();
-    /*
-    const result = await this.docClient.put(params, function(err, data) {
-        if (err) {
-          console.log('ERROR', JSON.stringify(err, null, 2));
-        } else {
-          console.log('createTodo', JSON.stringify(data, null, 2));
-        }
-    }).promise();
-    */
+    var createdItem: TodoItem = undefined;
+    await this.docClient.put(params).promise()
+    .then((data) => {
+      this.logger.info("Create process finished OK", {data})
+      createdItem = data as unknown as TodoItem;
+    })
+    .catch((err) => {
+      this.logger.error("Create process ERROR:",err)
+    });
 
-    this.logger.info('createTodo', {return:result})
-
-    return newItem;
+    return createdItem;
   }
 
   async deleteTodo(item: TodoItem) : Promise<boolean>{
@@ -81,7 +79,7 @@ export class TodosDBAccess{
       this.logger.info("Deleting process finished OK", {data})
       deleteOK=true;
     })
-    .catch((err) => {
+    .catch((err: AWSError) => {
       this.logger.error("Deleting process ERROR",err)
     });
 
@@ -108,18 +106,18 @@ export class TodosDBAccess{
     }
     
 
-    const result = await this.docClient.update(params,function(err, data) {
-      console.log('CHECKING UPDATE');
-      if (err) {
-        this.logger.info("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
-      } else {
-        this.logger.info("UpdateItem succeeded:", JSON.stringify(data, null, 2));
-      }
-    }).promise();
-    
-    this.logger.info('createTodo', {return:result})
+    var updatedItem: TodoItem = undefined;
+    await this.docClient.update(params).promise()
+    .then((data) => {
+      this.logger.info("Update process finished OK", {data})
+      updatedItem = data as unknown as TodoItem;
+    })
+    .catch((err) => {
+      this.logger.error("Update process ERROR:",err)
+    });
 
-    return newItem;
+    return updatedItem;
+    
   }
 
 }
