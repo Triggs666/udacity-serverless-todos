@@ -45,7 +45,8 @@ export class TodosDBAccess{
 
     const params = {
       TableName: this.todosTable,
-      Item: newItem
+      Item: newItem,
+      ReturnValues:"ALL_OLD"
     }
 
     var createdItem: TodoItem = undefined;
@@ -88,7 +89,6 @@ export class TodosDBAccess{
 
   async updateTodo(newItem: TodoItem):Promise<TodoItem> {
 
-    this.logger.info('updateTodo', {newTodo: newItem})
 
     const params = {
       TableName: this.todosTable,
@@ -96,15 +96,19 @@ export class TodosDBAccess{
         userId: newItem.userId,
         todoId: newItem.todoId
       },
-      UpdateExpression: "set dueDate =:dueDate, name=:name, done=:done",
+      UpdateExpression: "set dueDate =:dueDate, #N=:name, done=:done",
       ExpressionAttributeValues:{
           ":dueDate":newItem.dueDate,
           ":name":newItem.name,
           ":done":newItem.done
       },
+      ExpressionAttributeNames:{
+        "#N": "name"
+      },
       ReturnValues:"UPDATED_NEW"
     }
     
+    this.logger.info('updateTodo', {params})
 
     var updatedItem: TodoItem = undefined;
     await this.docClient.update(params).promise()

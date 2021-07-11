@@ -17,6 +17,17 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   const todos = new Todos();
   const item = await todos.updateTodobyUserTodoId(getUserId(event), todoId, updatedTodo)
 
+  if (item == undefined){
+    return {
+      statusCode: 500,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true
+      },
+      body: 'Server error updating item'
+    }
+  }
+
   return {
     statusCode: 201,
     headers: {

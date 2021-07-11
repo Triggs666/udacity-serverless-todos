@@ -41,7 +41,7 @@ export class Todos{
     
     }
 
-    async updateTodobyUserTodoId(userId: string, todoId:string, newItem:UpdateTodoRequest):Promise<TodoItem> {
+    updateTodobyUserTodoId(userId: string, todoId:string, newItem:UpdateTodoRequest):Promise<TodoItem> {
 
         const newTodo:TodoItem = {
             userId,
@@ -57,7 +57,7 @@ export class Todos{
     
     }
 
-    async deleteTodobyUserId(userId: string, todoId: string) {
+    async deleteTodobyUserId(userId: string, todoId: string): Promise<boolean> {
 
         const deleteTodo:TodoItem = {
             userId,
@@ -69,8 +69,7 @@ export class Todos{
         }
 
         this.logger.info('deleteTodobyUserId', {deleteTodo});
-        await this.dbAccess.deleteTodo(deleteTodo);
-        this.logger.info('deleteTodobyUserId END');
+        return await this.dbAccess.deleteTodo(deleteTodo);
     }
 
 
