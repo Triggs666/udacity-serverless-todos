@@ -144,4 +144,35 @@ export class TodosDBAccess{
     return result.Item as TodoItem;
   }
 
+  async updateURLTodo(item: TodoItem, URL: string):Promise<TodoItem> {
+
+    const params = {
+      TableName: this.todosTable,
+      Key:{
+        userId: item.userId,
+        todoId: item.todoId
+      },
+      UpdateExpression: "set attachmentUrl =:url",
+      ExpressionAttributeValues:{
+          ":url":URL
+      },
+      ReturnValues:"UPDATED_NEW"
+    }
+    
+    this.logger.info('updateURLTodo', {params})
+
+    var updatedItem: TodoItem = undefined;
+    await this.docClient.update(params).promise()
+    .then((data) => {
+      this.logger.info("Update URL process finished OK", {data})
+      updatedItem = data as unknown as TodoItem;
+    })
+    .catch((err) => {
+      this.logger.error("Update URL process ERROR:",err)
+    });
+
+    return updatedItem;
+    
+  }
+
 }

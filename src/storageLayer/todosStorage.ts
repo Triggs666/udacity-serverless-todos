@@ -14,7 +14,14 @@ export class TodosStorageAccess{
     this.logger = createLogger('STORAGE_LAYER::TODO_ACCESS');
   }
 
-  getUploadUrl(imageId: string):string {
+  getImageUrl(imageId: string):string {
+    
+    const imageURL = `https://${this.bucketName}.s3.amazonaws.com/${imageId}`;
+    return imageURL; 
+  
+  }
+
+  getSignedUploadUrl(imageId: string):string {
     
     this.logger.info('Getting upload URL', {imageId});
     const signedURL = this.s3.getSignedUrl('putObject', {

@@ -9,12 +9,13 @@ const logger = createLogger('LAMBDA_UPLOAD_URL')
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   const todoId = event.pathParameters.todoId
-  logger.info('Generating UploadUrl for TODO ', {todoId});
+  logger.info('Getting TODO ...', {todoId});
   
   const todos = new Todos();
   const userId = getUserId(event);
 
   const current_todo = await todos.getTodoByUserTodoId(userId, todoId);
+  logger.info('Got TODO ', {todoId});
 
   if (current_todo==undefined || current_todo.todoId==undefined) {
     return {
@@ -28,7 +29,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     }
   }
 
-  const uploadUrl = await todos.getUploadUrl(/*userId, todoId*/)
+  const uploadUrl = await todos.getUploadUrl(current_todo)
 
   if (uploadUrl == undefined){
     return {

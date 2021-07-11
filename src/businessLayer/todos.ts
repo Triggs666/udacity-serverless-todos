@@ -79,22 +79,18 @@ export class Todos{
         return this.dbAccess.getTodoByUserTodoId(userId, todoId);
     }
 
-    getUploadUrl(/*userId: string, todoId: string): Promise<string> {*/) : string {
+    getUploadUrl(currentItem:TodoItem): string {
 
         const imageId = uuid.v4();
-        return this.storageAccess.getUploadUrl(imageId);
-/*
-        const newTodo:TodoItem = {
-            userId,
-            todoId,
-            createdAt:'',
-            name: newItem.name,
-            dueDate: newItem.dueDate,
-            done: newItem.done
-        }
+        const signedURL = this.storageAccess.getSignedUploadUrl(imageId);
+        const URL = this.storageAccess.getImageUrl(imageId);
 
-        updateTodobyUserTodoId(userId, todoId, newItem:UpdateTodoRequest)
-*/
+        this.logger.info('updateURLTodo', {currentItem, URL});
+        const updatedItem = this.dbAccess.updateURLTodo(currentItem, URL);
+
+        if (updatedItem == undefined) return undefined;  //ERROR updating item!!!
+
+        return signedURL;
     }
 
 
