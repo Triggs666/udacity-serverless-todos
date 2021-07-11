@@ -16,14 +16,16 @@ export class TodosStorageAccess{
 
   getUploadUrl(imageId: string):string {
     
-    this.logger.info('Get upload URL', {imageId});
-
-    return this.s3.getSignedUrl('putObject', {
+    this.logger.info('Getting upload URL', {imageId});
+    const signedURL = this.s3.getSignedUrl('putObject', {
       Bucket: this.bucketName,
       Key: imageId,
       Expires: this.urlExpiration
     });
+
+    this.logger.info('Got upload URL', {URL:signedURL});
+    return signedURL 
   
   }
-  
+
 }
