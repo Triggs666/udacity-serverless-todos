@@ -3,6 +3,7 @@
 
 node_modules/
 .serverless/
+.vscode/
 
 # environment variables files
 set_env.sh

@@ -6,7 +6,7 @@ import { createLogger } from '../../utils/logger'
 import { Todos } from '../../businessLayer/todos'
 
 
-const logger = createLogger('lambda-getTodos')
+const logger = createLogger('LAMBDA_GET_TODOS')
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   

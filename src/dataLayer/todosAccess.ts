@@ -15,27 +15,29 @@ export class TodosDBAccess{
 
   constructor(){
       this.docClient = new AWS.DynamoDB.DocumentClient();
-      this.logger = createLogger('dataLayer::todosAccess');
+      this.logger = createLogger('DATA_LAYER::TODO_ACCESS');
   }
 
   async getTodosbyUserId(userId: string):Promise<TodoItem[]> {
 
-      this.logger.info('getTodosbyUserId', {userId})
-  
-      const result = await this.docClient.query({
-          TableName: this.todosTable,
-          KeyConditionExpression: 'userId = :userId',
-          ExpressionAttributeValues: {
-            ':userId': userId
-          },
-          ScanIndexForward: false
-        }).promise()
-  
-      this.logger.info('getTodosbyUserId', {return:result})
+    const params = {
+      TableName: this.todosTable,
+      KeyConditionExpression: 'userId = :userId',
+      ExpressionAttributeValues: {
+        ':userId': userId
+      },
+      ScanIndexForward: false
+    }
 
-      const items = result.Items;
+    this.logger.info('getTodosbyUserId', {params})
   
-      return items as TodoItem[];
+    const result = await this.docClient.query(params).promise()
+  
+    this.logger.info('getTodosbyUserId', {return:result})
+
+    const items = result.Items;
+  
+    return items as TodoItem[];
   
   }
 
@@ -89,7 +91,6 @@ export class TodosDBAccess{
 
   async updateTodo(newItem: TodoItem):Promise<TodoItem> {
 
-
     const params = {
       TableName: this.todosTable,
       Key:{
@@ -122,6 +123,25 @@ export class TodosDBAccess{
 
     return updatedItem;
     
+  }
+
+  async getTodoByUserTodoId(userId: string, todoId: string) : Promise<TodoItem>{
+
+    const params = {
+      TableName: this.todosTable,
+      Key: {
+        userId,
+        todoId
+      }
+    }
+
+    this.logger.info('getTodosbyUserId', {params})
+  
+    const result = await this.docClient.get(params).promise()
+  
+    this.logger.info('getTodosbyUserId', {return:result})
+
+    return result.Item as TodoItem;
   }
 
 }

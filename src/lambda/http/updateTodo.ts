@@ -7,7 +7,7 @@ import { createLogger } from '../../utils/logger'
 import { Todos } from '../../businessLayer/todos'
 import { getUserId } from '../utils'
 
-const logger = createLogger('updateTodo')
+const logger = createLogger('LAMBDA_UPDATE_TODOS')
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   const todoId = event.pathParameters.todoId
