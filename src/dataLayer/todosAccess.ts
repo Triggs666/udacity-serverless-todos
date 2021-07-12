@@ -47,15 +47,14 @@ export class TodosDBAccess{
 
     const params = {
       TableName: this.todosTable,
-      Item: newItem,
-      ReturnValues:"ALL_OLD"
+      Item: newItem
     }
 
     var createdItem: TodoItem = undefined;
     await this.docClient.put(params).promise()
     .then((data) => {
       this.logger.info("Create process finished OK", {data})
-      createdItem = data as unknown as TodoItem;
+      createdItem = newItem;
     })
     .catch((err) => {
       this.logger.error("Create process ERROR:",err)

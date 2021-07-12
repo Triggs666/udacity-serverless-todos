@@ -19,14 +19,14 @@ export class Todos{
         this.storageAccess = new TodosStorageAccess();
     }
 
-    getTodosbyUserId(userId: string):Promise<TodoItem[]> {
+    async getTodosbyUserId(userId: string):Promise<TodoItem[]> {
 
         this.logger.info('getTodosbyUserId', {userId})
-        return this.dbAccess.getTodosbyUserId(userId);
+        return await this.dbAccess.getTodosbyUserId(userId);
     
     }
 
-    createTodobyUserId(userId: string, newItem:CreateTodoRequest):Promise<TodoItem> {
+    async createTodobyUserId(userId: string, newItem:CreateTodoRequest):Promise<TodoItem> {
 
         const todoId = uuid.v4();
         const createdAt = new Date().toISOString();
@@ -41,10 +41,10 @@ export class Todos{
         }
 
         this.logger.info('createTodobyUserId', {userId, newTodo});
-        return this.dbAccess.createTodo(newTodo);
+        return await this.dbAccess.createTodo(newTodo);
     }
 
-    updateTodobyUserTodoId(userId: string, todoId:string, newItem:UpdateTodoRequest):Promise<TodoItem> {
+    async updateTodobyUserTodoId(userId: string, todoId:string, newItem:UpdateTodoRequest):Promise<TodoItem> {
 
         const newTodo:TodoItem = {
             userId,
@@ -56,11 +56,11 @@ export class Todos{
         }
 
         this.logger.info('updateTodobyUserId', {userId, newTodo});
-        return this.dbAccess.updateTodo(newTodo);
+        return await this.dbAccess.updateTodo(newTodo);
     
     }
 
-    deleteTodobyUserId(userId: string, todoId: string): Promise<boolean> {
+    async deleteTodobyUserId(userId: string, todoId: string): Promise<boolean> {
 
         const deleteTodo:TodoItem = {
             userId,
@@ -72,21 +72,21 @@ export class Todos{
         }
 
         this.logger.info('deleteTodobyUserId', {deleteTodo});
-        return this.dbAccess.deleteTodo(deleteTodo);
+        return await this.dbAccess.deleteTodo(deleteTodo);
     }
 
-    getTodoByUserTodoId(userId: string, todoId: string): Promise<TodoItem> {
-        return this.dbAccess.getTodoByUserTodoId(userId, todoId);
+    async getTodoByUserTodoId(userId: string, todoId: string): Promise<TodoItem> {
+        return await this.dbAccess.getTodoByUserTodoId(userId, todoId);
     }
 
-    getUploadUrl(currentItem:TodoItem): string {
+    async getUploadUrl(currentItem:TodoItem): Promise<string> {
 
         const imageId = uuid.v4();
         const signedURL = this.storageAccess.getSignedUploadUrl(imageId);
         const URL = this.storageAccess.getImageUrl(imageId);
 
         this.logger.info('updateURLTodo', {currentItem, URL});
-        const updatedItem = this.dbAccess.updateURLTodo(currentItem, URL);
+        const updatedItem = await this.dbAccess.updateURLTodo(currentItem, URL);
 
         if (updatedItem == undefined) return undefined;  //ERROR updating item!!!
 

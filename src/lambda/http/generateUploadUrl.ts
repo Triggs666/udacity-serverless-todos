@@ -15,7 +15,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   const userId = getUserId(event);
 
   const current_todo = await todos.getTodoByUserTodoId(userId, todoId);
-  logger.info('Got TODO ', {todoId});
+  logger.info('Got TODO ', {current_todo});
 
   if (current_todo==undefined || current_todo.todoId==undefined) {
     return {
@@ -53,8 +53,4 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     })
   }
   
-  
-  
-  // TODO: Return a presigned URL to upload a file for a TODO item with the provided id
-  return undefined
 }
