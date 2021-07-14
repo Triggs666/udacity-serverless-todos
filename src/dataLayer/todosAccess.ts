@@ -1,4 +1,5 @@
 import * as AWS  from 'aws-sdk'
+import * as AWSXRay from 'aws-xray-sdk'
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 
 import { TodoItem } from '../models/TodoItem';
@@ -14,7 +15,8 @@ export class TodosDBAccess{
   private readonly todosTable = process.env.TODOS_TABLE;
 
   constructor(){
-      this.docClient = new AWS.DynamoDB.DocumentClient();
+      const XAWS  = AWSXRay.captureAWS(AWS)
+      this.docClient = new XAWS.DynamoDB.DocumentClient();
       this.logger = createLogger('DATA_LAYER::TODO_ACCESS');
   }
 

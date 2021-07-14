@@ -6,6 +6,7 @@ plugins:
   - serverless-iam-roles-per-function
   - serverless-reqvalidator-plugin
   - serverless-aws-documentation
+  - serverless-plugin-tracing
 
 provider:
   name: aws
@@ -19,6 +20,19 @@ provider:
     INDEX_NAME: ot-aws-dyndb-todosiIndex
     IMAGES_S3_BUCKET: ot-aws-s3-bucket-images-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
+
+  tracing:
+    lambda: true
+    apiGateway: true
+
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - 'xray:PutTraceSegments'
+        - 'xray:PutTelemetryRecords'
+      Resource:
+        - '*' 
+
 
 custom:
   documentation:
@@ -34,7 +48,6 @@ custom:
       - name: UpdateTodoRequest
         contentType: application/json
         schema: ${file(models/update-todo-request.json)}
-
 
     
 functions:
